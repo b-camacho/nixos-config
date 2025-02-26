@@ -22,8 +22,8 @@
     # this, use your own, or toss it. Its typically safe to use a binary cache
     # since the data inside is checksummed.
     settings = {
-      substituters = ["https://mitchellh-nixos-config.cachix.org"];
-      trusted-public-keys = ["mitchellh-nixos-config.cachix.org-1:bjEbXJyLrL1HZZHBbO4QALnI5faYZppzkU4D2s0G8RQ="];
+      substituters = ["https://mitchellh-nixos-config.cachix.org" "https://cache.nixos.org" ];
+      trusted-public-keys = ["mitchellh-nixos-config.cachix.org-1:bjEbXJyLrL1HZZHBbO4QALnI5faYZppzkU4D2s0G8RQ=" "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="];
     };
   };
 
@@ -41,7 +41,7 @@
   boot.loader.systemd-boot.consoleMode = "0";
 
   # Define your hostname.
-  networking.hostName = "dev";
+  networking.hostName = "mire";
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -77,7 +77,7 @@
   # Enable tailscale. We manually authenticate when we want with
   # "sudo tailscale up". If you don't use tailscale, you should comment
   # out or delete all of this.
-  services.tailscale.enable = true;
+  services.tailscale.enable = false;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.mutableUsers = false;
