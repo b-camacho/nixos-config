@@ -40,7 +40,6 @@
 
     # Other packages
     jujutsu.url = "github:martinvonz/jj";
-    zig.url = "github:mitchellh/zig-overlay";
 
     # Non-flakes
     nvim-conform.url = "github:stevearc/conform.nvim/v7.1.0";
@@ -72,8 +71,6 @@
   outputs = { self, nixpkgs, home-manager, darwin, ... }@inputs: let
     # Overlays is the list of overlays we want to apply from flake inputs.
     overlays = [
-      inputs.jujutsu.overlays.default
-      inputs.zig.overlays.default
 
       (final: prev: rec {
         # gh CLI on stable has bugs.
@@ -90,36 +87,37 @@
       inherit overlays nixpkgs inputs;
     };
   in {
-    nixosConfigurations.vm-aarch64 = mkSystem "vm-aarch64" {
+    nixosConfigurations.mire = mkSystem "vm-aarch64" {
       system = "aarch64-linux";
-      user   = "mitchellh";
+      user   = "lucia";
     };
 
-    nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" rec {
-      system = "aarch64-linux";
-      user   = "mitchellh";
-    };
-
-    nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" rec {
-      system = "aarch64-linux";
-      user   = "mitchellh";
-    };
-
-    nixosConfigurations.vm-intel = mkSystem "vm-intel" rec {
-      system = "x86_64-linux";
-      user   = "mitchellh";
-    };
-
-    nixosConfigurations.wsl = mkSystem "wsl" {
-      system = "x86_64-linux";
-      user   = "mitchellh";
-      wsl    = true;
-    };
-
-    darwinConfigurations.macbook-pro-m1 = mkSystem "macbook-pro-m1" {
-      system = "aarch64-darwin";
-      user   = "mitchellh";
-      darwin = true;
-    };
+# for now I am not using the other systems
+#    nixosConfigurations.vm-aarch64-prl = mkSystem "vm-aarch64-prl" rec {
+#      system = "aarch64-linux";
+#      user   = "lucia";
+#    };
+#
+#    nixosConfigurations.vm-aarch64-utm = mkSystem "vm-aarch64-utm" rec {
+#      system = "aarch64-linux";
+#      user   = "lucia";
+#    };
+#
+#    nixosConfigurations.vm-intel = mkSystem "vm-intel" rec {
+#      system = "x86_64-linux";
+#      user   = "lucia";
+#    };
+#
+#    nixosConfigurations.wsl = mkSystem "wsl" {
+#      system = "x86_64-linux";
+#      user   = "lucia";
+#      wsl    = true;
+#    };
+#
+#    darwinConfigurations.macbook-pro-m1 = mkSystem "macbook-pro-m1" {
+#      system = "aarch64-darwin";
+#      user   = "lucia";
+#      darwin = true;
+#    };
   };
 }

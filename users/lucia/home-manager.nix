@@ -29,7 +29,6 @@ in {
   # per-project flakes sourced with direnv and nix-shell, so this is
   # not a huge list.
   home.packages = [
-    pkgs._1password-cli
     pkgs.asciinema
     pkgs.bat
     pkgs.eza
@@ -39,14 +38,9 @@ in {
     pkgs.htop
     pkgs.jq
     pkgs.ripgrep
-    pkgs.sentry-cli
     pkgs.tree
     pkgs.watch
 
-    pkgs.gopls
-    pkgs.zigpkgs."0.13.0"
-
-    # Node is required for Copilot.vim
     pkgs.nodejs
   ] ++ (lib.optionals isDarwin [
     # This is automatically setup on Linux
@@ -56,9 +50,7 @@ in {
     pkgs.chromium
     pkgs.firefox
     pkgs.rofi
-    pkgs.valgrind
     pkgs.zathura
-    pkgs.xfce.xfce4-terminal
   ]);
 
   #---------------------------------------------------------------------
@@ -114,80 +106,21 @@ in {
     initExtra = builtins.readFile ./bashrc;
 
     shellAliases = {
-      ga = "git add";
-      gc = "git commit";
-      gco = "git checkout";
-      gcp = "git cherry-pick";
-      gdiff = "git diff";
-      gl = "git prettylog";
-      gp = "git push";
-      gs = "git status";
-      gt = "git tag";
+      gpu = "[[ -z $(git config \"branch.$(git symbolic-ref --short HEAD).merge\") ]] && git push -u origin $(git symbolic-ref --short HEAD) || git push";
+      gsu = "git submodule update --init --recursive";
+      gb = "git checkout $(git branch -r | fzf | sed -e \"s|origin/||\")";
+      gg = "git rev-parse HEAD | tr -d \\n | xclip -selection clipboard";
+      ghpr = "gh pr view --json url --jq .url | xclip";
     };
   };
 
-  programs.direnv= {
-    enable = true;
-
-    config = {
-      whitelist = {
-        prefix= [
-          "$HOME/code/go/src/github.com/hashicorp"
-          "$HOME/code/go/src/github.com/mitchellh"
-        ];
-
-        exact = ["$HOME/.envrc"];
-      };
-    };
-  };
-
-  programs.fish = {
-    enable = true;
-    interactiveShellInit = lib.strings.concatStrings (lib.strings.intersperse "\n" ([
-      "source ${sources.theme-bobthefish}/functions/fish_prompt.fish"
-      "source ${sources.theme-bobthefish}/functions/fish_right_prompt.fish"
-      "source ${sources.theme-bobthefish}/functions/fish_title.fish"
-      (builtins.readFile ./config.fish)
-      "set -g SHELL ${pkgs.fish}/bin/fish"
-    ]));
-
-    shellAliases = {
-      ga = "git add";
-      gc = "git commit";
-      gco = "git checkout";
-      gcp = "git cherry-pick";
-      gdiff = "git diff";
-      gl = "git prettylog";
-      gp = "git push";
-      gs = "git status";
-      gt = "git tag";
-
-      jf = "jj git fetch";
-      jn = "jj new";
-      js = "jj st";
-    } // (if isLinux then {
-      # Two decades of using a Mac has made this such a strong memory
-      # that I'm just going to keep it consistent.
-      pbcopy = "xclip";
-      pbpaste = "xclip -o";
-    } else {});
-
-    plugins = map (n: {
-      name = n;
-      src  = sources.${n};
-    }) [
-      "fish-fzf"
-      "fish-foreign-env"
-      "theme-bobthefish"
-    ];
-  };
 
   programs.git = {
     enable = true;
-    userName = "Mitchell Hashimoto";
-    userEmail = "m@mitchellh.com";
+    userName = "Lucia Camacho";
+    userEmail = "lucia3e8@gmail.com";
     signing = {
-      key = "523D5DC389D273BC";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMAYiFyoiz/ZxOZP7TPusk8/I1x7Dcz6aG7KznK7VlcP";
       signByDefault = true;
     };
     aliases = {
@@ -198,18 +131,12 @@ in {
     extraConfig = {
       branch.autosetuprebase = "always";
       color.ui = true;
-      core.askPass = ""; # needs to be empty to use terminal for ask pass
-      credential.helper = "store"; # want to make this more secure
-      github.user = "mitchellh";
+      core.askPass = "";
+      credential.helper = "store";
+      github.user = "b-camacho";
       push.default = "tracking";
       init.defaultBranch = "main";
     };
-  };
-
-  programs.go = {
-    enable = true;
-    goPath = "code/go";
-    goPrivate = [ "github.com/mitchellh" "github.com/hashicorp" "rfc822.mx" ];
   };
 
   programs.jujutsu = {
@@ -255,11 +182,6 @@ in {
         { key = "Subtract"; mods = "Command"; action = "DecreaseFontSize"; }
       ];
     };
-  };
-
-  programs.kitty = {
-    enable = !isWSL;
-    extraConfig = builtins.readFile ./kitty;
   };
 
   programs.i3status = {
